@@ -4,7 +4,10 @@ import { Banner } from '@/ui/components/Banner'
 import { Combo, RoundProgress } from '@/ui/components/Hud'
 import { playReward, type RewardVisual } from '@/ui/effects/rewards'
 import { primeAudio } from '@/ui/effects/sfx'
-import type { PairToken } from '@/domain/engine/pairMatch'
+import { pairMatchEngine, type PairToken } from '@/domain/engine/pairMatch'
+
+/** Скільки плитка сіріє й гасне перед підміною. Збігається з анімацією в CSS. */
+const FADE_MS = 420
 
 /** Головний екран — механіка №1 «утворення пар». */
 export function SessionScreen() {
@@ -13,6 +16,7 @@ export function SessionScreen() {
   const deck = useApp((s) => s.deck)
   const feedback = useApp((s) => s.feedback)
   const tap = useApp((s) => s.tap)
+  const sweep = useApp((s) => s.sweep)
   const finish = useApp((s) => s.finish)
   const consumeRewards = useApp((s) => s.consumeRewards)
   const rewards = useApp((s) => s.rewards)
@@ -37,10 +41,18 @@ export function SessionScreen() {
     }
   }, [rewards, consumeRewards])
 
+  // Зійшла пара — даємо плиткам посіріти й згаснути, і аж тоді підміняємо.
+  // Затримка тут, а не в домені: це питання анімації, а не правил гри.
+  useEffect(() => {
+    if (feedback.kind !== 'match') return
+    const t = setTimeout(sweep, FADE_MS)
+    return () => clearTimeout(t)
+  }, [feedback, sweep])
+
   // Раунд закрито — коротка пауза на анімацію, далі підсумок.
   useEffect(() => {
     if (!round || completedRef.current) return
-    if (round.resolved >= round.total && round.total > 0) {
+    if (pairMatchEngine.isComplete(round)) {
       completedRef.current = true
       const t = setTimeout(() => void finish(), 700)
       return () => clearTimeout(t)
@@ -63,21 +75,26 @@ export function SessionScreen() {
   }
 
   const stateClass = (token: PairToken) => {
-    if (token.matched) return ' tile--gone'
+    if (token.matched) return ' tile--matched'
     if (round.selectedId === token.id) return ' tile--selected'
     if (feedback.kind === 'mismatch' && feedback.tokenIds.includes(token.id)) return ' tile--mismatch'
+    if (token.generation > 0) return ' tile--enter'
     return ''
   }
 
   return (
     <>
-      <RoundProgress resolved={round.resolved} total={round.total} />
+      <RoundProgress resolved={round.resolved} target={round.target} onFinish={() => void finish()} />
       <Combo combo={session?.combo ?? 0} />
       <div className={`board${shaking ? ' shake' : ''}`}>
         <div className="column">
           <span className="column__label">{deck.sideLabels.prompt}</span>
           {prompts.map((token) => (
-            <button key={token.id} className={`tile${stateClass(token)}`} onPointerDown={() => onTap(token)}>
+            <button
+              key={`${token.id}:${token.generation}`}
+              className={`tile${stateClass(token)}`}
+              onPointerDown={() => onTap(token)}
+            >
               {token.text}
             </button>
           ))}
@@ -85,7 +102,11 @@ export function SessionScreen() {
         <div className="column">
           <span className="column__label">{deck.sideLabels.answer}</span>
           {answers.map((token) => (
-            <button key={token.id} className={`tile${stateClass(token)}`} onPointerDown={() => onTap(token)}>
+            <button
+              key={`${token.id}:${token.generation}`}
+              className={`tile${stateClass(token)}`}
+              onPointerDown={() => onTap(token)}
+            >
               {token.text}
             </button>
           ))}

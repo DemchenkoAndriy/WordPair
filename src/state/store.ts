@@ -50,6 +50,8 @@ interface AppState {
   startRound(deckId?: DeckId, mode?: ExerciseMode): Promise<void>
   tap(tokenId: string): void
   finish(): Promise<void>
+  /** Прибирає зійшлі пари й підтягує нові. Викликає UI після анімації згасання. */
+  sweep(): void
   goTo(screen: Screen): void
   consumeRewards(): RewardEvent[]
   updateSettings(patch: Partial<Settings>): void
@@ -108,13 +110,11 @@ export const useApp = create<AppState>((set, get) => ({
     const now = Date.now()
     const rng = createRng(now)
 
-    const cards = selectRoundCards({
-      cards: deck.cards,
-      progress,
-      size: state.settings.pairsPerRound,
-      now,
-      rng,
-    })
+    const { boardPairs, roundPairs, endless } = state.settings
+    // У безкінечному режимі беремо стартову порцію й доливаємо по ходу;
+    // у скінченному — одразу всі картки раунду.
+    const size = endless ? boardPairs * 3 : Math.max(roundPairs, boardPairs)
+    const cards = selectRoundCards({ cards: deck.cards, progress, size, now, rng })
 
     set({
       deck,
@@ -122,7 +122,14 @@ export const useApp = create<AppState>((set, get) => ({
       screen: 'session',
       feedback: { kind: 'none' },
       rewards: [],
-      round: pairMatchEngine.init({ deck, cards, rng, startedAt: now }),
+      round: pairMatchEngine.init({
+        deck,
+        cards,
+        boardPairs,
+        target: endless ? null : Math.min(roundPairs, deck.cards.length),
+        rng,
+        startedAt: now,
+      }),
       session: createSession({ id: `s-${now}`, deckId: id, mode, startedAt: now }),
       settings: { ...state.settings, lastDeckId: id, lastMode: mode },
     })
@@ -182,6 +189,34 @@ export const useApp = create<AppState>((set, get) => ({
       feedback: step.feedback,
       rewards: [...state.rewards, ...rewards],
     })
+  },
+
+  sweep() {
+    const state = get()
+    const { round, deck } = state
+    if (!round || !deck || !pairMatchEngine.canSweep(round)) return
+
+    const now = Date.now()
+    let next = pairMatchEngine.sweep(round, createRng(now))
+
+    // Безкінечний режим: доливаємо чергу картками, яких зараз немає на полі,
+    // щоб одне й те саме слово не з'явилося двічі одночасно.
+    if (round.target === null && pairMatchEngine.queued(next) < state.settings.boardPairs) {
+      const busy = new Set([...next.tokens.map((t) => t.cardId), ...next.queue.map((c) => c.id)])
+      const pool = deck.cards.filter((c) => !busy.has(c.id))
+      next = pairMatchEngine.refill(
+        next,
+        selectRoundCards({
+          cards: pool,
+          progress: state.progress,
+          size: state.settings.boardPairs * 2,
+          now,
+          rng: createRng(now + 1),
+        }),
+      )
+    }
+
+    set({ round: next })
   },
 
   async finish() {

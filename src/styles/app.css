@@ -69,9 +69,16 @@ body {
 .hud__mute[aria-pressed='true'] { opacity: .5; }
 .hud__mute:active { transform: scale(.9); }
 
-.round-progress { display: flex; gap: 4px; padding: 0 4px 10px; flex-shrink: 0; }
-.round-progress__dot { flex: 1; height: 4px; border-radius: 2px; background: var(--surface); }
-.round-progress__dot--done { background: var(--good); }
+.round-progress { display: flex; align-items: center; gap: 10px; padding: 0 4px 10px; flex-shrink: 0; }
+.round-progress__bar { flex: 1; height: 4px; border-radius: 2px; background: var(--surface); overflow: hidden; }
+.round-progress__fill { height: 100%; background: var(--good); transition: width .4s cubic-bezier(.2,.9,.2,1); }
+.round-progress__count { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.round-progress__finish {
+  margin-left: auto; min-height: 28px; padding: 0 12px;
+  border: 1px solid #2a3255; border-radius: 999px;
+  background: transparent; color: var(--muted);
+  font: inherit; font-size: 12px; cursor: pointer;
+}
 
 /* ─── Комбо ─── */
 .combo { text-align: center; height: 34px; font-weight: 800; font-size: 22px; letter-spacing: .5px; flex-shrink: 0; }
@@ -108,9 +115,12 @@ body {
 }
 .tile:active { transform: scale(.96); }
 .tile--selected { border-color: var(--accent); background: var(--surface-2); box-shadow: 0 0 0 2px rgba(124,92,255,.35); }
-.tile--match { animation: match .34s ease-out forwards; }
+/* Зійшла пара: слово сіріє й гасне, але тримає місце, доки не прийде підміна. */
+.tile--matched { animation: fadeOut .42s ease-out forwards; pointer-events: none; }
+/* Підміна: у тому самому слоті проявляється нове слово. */
+.tile--enter { animation: fadeIn .34s ease-out backwards; }
 .tile--mismatch { animation: mismatch .32s ease-in-out; border-color: var(--bad); }
-.tile--gone { opacity: 0; pointer-events: none; visibility: hidden; }
+
 
 /* ─── Банер нагороди ─── */
 .banner {
@@ -157,7 +167,15 @@ body {
 .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px; background: var(--surface); border-radius: var(--radius); margin-bottom: 10px; }
 
 @keyframes pop { 0% { transform: scale(.6); opacity: 0 } 60% { transform: scale(1.15) } 100% { transform: scale(1); opacity: 1 } }
-@keyframes match { 0% { transform: scale(1) } 40% { transform: scale(1.06); background: rgba(0,224,164,.25); border-color: var(--good) } 100% { transform: scale(.9); opacity: 0 } }
+@keyframes fadeOut {
+  0%   { transform: scale(1); opacity: 1 }
+  25%  { transform: scale(1.05); background: rgba(0,224,164,.25); border-color: var(--good) }
+  100% { transform: scale(.96); opacity: .12; filter: grayscale(1); border-color: #2a3255 }
+}
+@keyframes fadeIn {
+  0%   { opacity: 0; transform: scale(.92) }
+  100% { opacity: 1; transform: scale(1) }
+}
 @keyframes mismatch { 0%,100% { transform: translateX(0) } 25% { transform: translateX(-6px) } 75% { transform: translateX(6px) } }
 @keyframes shake { 0%,100% { transform: translateX(0) } 20% { transform: translateX(-5px) } 60% { transform: translateX(5px) } }
 @keyframes rise { 0% { opacity: 0; transform: translate(-50%, 10px) scale(.9) } 20% { opacity: 1; transform: translate(-50%, 0) scale(1) } 80% { opacity: 1 } 100% { opacity: 0; transform: translate(-50%, -20px) } }

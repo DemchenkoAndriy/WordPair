@@ -35,13 +35,46 @@ export function Hud({ xp, streakDays, soundEnabled, onToggleSound }: HudProps) {
   )
 }
 
-/** Прогрес усередині раунду — крапки замість відсотків: читається за 100 мс. */
-export function RoundProgress({ resolved, total }: { resolved: number; total: number }) {
+interface RoundProgressProps {
+  resolved: number
+  /** null — безкінечний режим: цілі немає, є лічильник і кнопка завершення. */
+  target: number | null
+  onFinish(): void
+}
+
+/**
+ * Прогрес усередині раунду.
+ * У скінченному режимі — смужка з лічильником; у безкінечному цілі не існує,
+ * тому показуємо накопичене й даємо єдиний спосіб зупинитися.
+ */
+export function RoundProgress({ resolved, target, onFinish }: RoundProgressProps) {
+  if (target === null) {
+    return (
+      <div className="round-progress">
+        <span className="round-progress__count">∞ · {resolved}</span>
+        <button type="button" className="round-progress__finish" onClick={onFinish}>
+          Завершити
+        </button>
+      </div>
+    )
+  }
+
+  const ratio = target === 0 ? 0 : Math.min(1, resolved / target)
   return (
-    <div className="round-progress" aria-label={`Пар закрито ${resolved} з ${total}`}>
-      {Array.from({ length: total }, (_, i) => (
-        <span key={i} className={`round-progress__dot${i < resolved ? ' round-progress__dot--done' : ''}`} />
-      ))}
+    <div className="round-progress">
+      <div
+        className="round-progress__bar"
+        role="progressbar"
+        aria-valuenow={resolved}
+        aria-valuemin={0}
+        aria-valuemax={target}
+        aria-label={`Пар закрито ${resolved} з ${target}`}
+      >
+        <div className="round-progress__fill" style={{ width: `${ratio * 100}%` }} />
+      </div>
+      <span className="round-progress__count">
+        {resolved}/{target}
+      </span>
     </div>
   )
 }

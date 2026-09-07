@@ -11,6 +11,7 @@ import { parseDeck } from './deckSchema'
 
 const loaders: Record<DeckId, () => Promise<{ default: unknown }>> = {
   vscode: () => import('@/content/decks/vscode.json'),
+  'vscode-ui': () => import('@/content/decks/vscode-ui.json'),
   'sap-b1': () => import('@/content/decks/sap-b1.json'),
   jira: () => import('@/content/decks/jira.json'),
 }
@@ -18,16 +19,28 @@ const loaders: Record<DeckId, () => Promise<{ default: unknown }>> = {
 /** Легкий каталог. Тримається окремо від контенту, щоб не роздувати перший чанк. */
 export const DECK_CATALOG: DeckSummary[] = [
   {
-    id: 'vscode',
-    title: 'VS Code',
-    subtitle: 'Гарячі клавіші (Windows / Linux)',
+    id: 'vscode-ui',
+    title: 'VS Code · Інтерфейс',
+    subtitle: 'Як називаються частини редактора',
     icon: '🧩',
+    accent: '#5cc8ff',
+    locale: 'uk',
+    sideLabels: { prompt: 'Назва в інтерфейсі', answer: 'Що це' },
+    tags: ['ide', 'ui'],
+    version: 1,
+    cardCount: 40,
+  },
+  {
+    id: 'vscode',
+    title: 'VS Code · Клавіші',
+    subtitle: 'Гарячі клавіші (Windows / Linux)',
+    icon: '⌨️',
     accent: '#3aa0ff',
     locale: 'uk',
     sideLabels: { prompt: 'Дія', answer: 'Скорочення' },
     tags: ['ide', 'shortcuts'],
-    version: 1,
-    cardCount: 20,
+    version: 2,
+    cardCount: 40,
   },
   {
     id: 'sap-b1',
@@ -55,7 +68,7 @@ export const DECK_CATALOG: DeckSummary[] = [
   },
 ]
 
-export const DEFAULT_DECK_ID: DeckId = 'vscode'
+export const DEFAULT_DECK_ID: DeckId = 'vscode-ui'
 
 const cache = new Map<DeckId, Deck>()
 

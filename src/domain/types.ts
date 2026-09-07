@@ -113,8 +113,12 @@ export interface Settings {
   hapticsEnabled: boolean
   /** Вимикає важкі анімації; автоматично вмикається при prefers-reduced-motion. */
   reducedMotion: boolean
-  /** Скільки пар в одному раунді парування. */
-  pairsPerRound: number
+  /** Скільки пар одночасно видно на полі. */
+  boardPairs: number
+  /** Скільки пар треба закрити, щоб раунд завершився. Ігнорується в безкінечному режимі. */
+  roundPairs: number
+  /** Безкінечний режим: картки підтягуються нескінченно, раунд завершує користувач. */
+  endless: boolean
   /** Ціль на день у сесіях. */
   dailyGoalSessions: number
   lastDeckId: DeckId | null

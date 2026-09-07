@@ -27,16 +27,40 @@ export function SettingsScreen() {
       </label>
 
       <label className="row">
-        <span>Пар у раунді</span>
+        <span>Безкінечний режим</span>
+        <input
+          type="checkbox"
+          checked={settings.endless}
+          onChange={(e) => update({ endless: e.target.checked })}
+        />
+      </label>
+
+      <label className="row">
+        <span>Пар на полі</span>
         <input
           type="range"
-          min={4}
+          min={3}
           max={8}
-          value={settings.pairsPerRound}
-          onChange={(e) => update({ pairsPerRound: Number(e.target.value) })}
+          value={settings.boardPairs}
+          onChange={(e) => update({ boardPairs: Number(e.target.value) })}
         />
-        <strong>{settings.pairsPerRound}</strong>
+        <strong>{settings.boardPairs}</strong>
       </label>
+
+      {!settings.endless && (
+        <label className="row">
+          <span>Пар у раунді</span>
+          <input
+            type="range"
+            min={5}
+            max={40}
+            step={5}
+            value={settings.roundPairs}
+            onChange={(e) => update({ roundPairs: Number(e.target.value) })}
+          />
+          <strong>{settings.roundPairs}</strong>
+        </label>
+      )}
 
       <label className="row">
         <span>Ціль на день, раундів</span>

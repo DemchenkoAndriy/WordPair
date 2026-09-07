@@ -21,18 +21,39 @@ export interface RoundEngine<TState extends RoundState, TInput> {
 
 export interface RoundInit {
   deck: Pick<Deck, 'id'>
+  /** Перші `boardPairs` карток ідуть на поле, решта — у чергу на підміну. */
   cards: readonly Card[]
+  boardPairs: number
+  /** Скільки пар закрити до завершення; null — безкінечний режим. */
+  target: number | null
   rng: Rng
   startedAt: number
+}
+
+/**
+ * Рушій, у якому поле не спорожнюється: закрита картка гасне, а на її місце
+ * приходить нова. Винесено в окремий інтерфейс — режим «написання з клавіатури»
+ * цього не потребує, і не має тягнути зайвих методів.
+ */
+export interface RefillableEngine<TState extends RoundState> {
+  /** Чи вже можна робити підміну (див. SWEEP_BATCH у реалізації). */
+  canSweep(state: TState): boolean
+  /** Прибирає зійшлі пари й підтягує нові. Викликає UI — після анімації згасання. */
+  sweep(state: TState, rng: Rng): TState
+  /** Додає картки в чергу. Потрібно безкінечному режиму. */
+  refill(state: TState, cards: readonly Card[]): TState
+  /** Скільки карток лишилось у черзі — щоб знати, коли доливати. */
+  queued(state: TState): number
 }
 
 /** Спільна частина стану будь-якого раунду. */
 export interface RoundState {
   mode: ExerciseMode
   deckId: string
-  /** Скільки карток закрито з `total`. */
+  /** Скільки пар закрито від початку раунду. */
   resolved: number
-  total: number
+  /** Ціль раунду; null — безкінечний режим. */
+  target: number | null
   startedAt: number
 }
 
