@@ -41,6 +41,12 @@ export interface Deck {
   tags: string[]
   /** Версія контенту; зростає при зміні карток — потрібна для міграції прогресу. */
   version: number
+  /**
+   * Яку сторону картки озвучувати і якою мовою.
+   * Немає поля — колода мовчить. Так колода гарячих клавіш не намагається
+   * вимовити «Ctrl+Shift+P», а SAP-колода — українські терміни англійським голосом.
+   */
+  speech?: { side: 'prompt' | 'answer'; lang: string }
   cards: Card[]
 }
 
@@ -113,6 +119,8 @@ export interface Settings {
   hapticsEnabled: boolean
   /** Вимикає важкі анімації; автоматично вмикається при prefers-reduced-motion. */
   reducedMotion: boolean
+  /** Вимовляти слово при тапі по плитці. Підпорядковане soundEnabled. */
+  speechEnabled: boolean
   /** Скільки пар одночасно видно на полі. */
   boardPairs: number
   /** Скільки пар треба закрити, щоб раунд завершився. Ігнорується в безкінечному режимі. */

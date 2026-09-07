@@ -18,6 +18,19 @@ export function SettingsScreen() {
       </label>
 
       <label className="row">
+        <span>
+          Озвучення
+          <small className="row__hint">Тап по англійському слову — воно вимовляється</small>
+        </span>
+        <input
+          type="checkbox"
+          checked={settings.speechEnabled}
+          disabled={!settings.soundEnabled}
+          onChange={(e) => update({ speechEnabled: e.target.checked })}
+        />
+      </label>
+
+      <label className="row">
         <span>Вібрація</span>
         <input
           type="checkbox"

@@ -5,49 +5,379 @@
   "icon": "🧩",
   "accent": "#5cc8ff",
   "locale": "uk",
-  "sideLabels": { "prompt": "Назва в інтерфейсі", "answer": "Що це" },
-  "tags": ["ide", "ui"],
+  "sideLabels": {
+    "prompt": "Назва в інтерфейсі",
+    "answer": "Що це"
+  },
+  "tags": [
+    "ide",
+    "ui"
+  ],
   "version": 1,
+  "speech": {
+    "side": "prompt",
+    "lang": "en-US"
+  },
   "cards": [
-    { "id": "vui-01", "prompt": "Activity Bar", "answer": "Вузька смуга іконок ліворуч: Explorer, пошук, Git", "tags": ["каркас"], "difficulty": 1 },
-    { "id": "vui-02", "prompt": "Side Bar", "answer": "Широка панель поруч з іконками — вміст обраного розділу", "tags": ["каркас"], "difficulty": 1 },
-    { "id": "vui-03", "prompt": "Status Bar", "answer": "Смуга внизу: гілка, помилки, кодування, мова файлу", "tags": ["каркас"], "difficulty": 1 },
-    { "id": "vui-04", "prompt": "Panel", "answer": "Нижня область: термінал, Problems, Output, Debug Console", "tags": ["каркас"], "difficulty": 2 },
-    { "id": "vui-05", "prompt": "Editor Group", "answer": "Колонка редакторів; їх може бути кілька поруч", "tags": ["каркас"], "difficulty": 3 },
-    { "id": "vui-06", "prompt": "Explorer", "answer": "Дерево файлів проєкту", "tags": ["панелі"], "difficulty": 1 },
-    { "id": "vui-07", "prompt": "Source Control", "answer": "Панель Git: зміни, коміти, гілки", "tags": ["панелі"], "difficulty": 2 },
-    { "id": "vui-08", "prompt": "Problems", "answer": "Список помилок і попереджень з усього проєкту", "tags": ["панелі"], "difficulty": 2 },
-    { "id": "vui-09", "prompt": "Output", "answer": "Технічні логи розширень і завдань", "tags": ["панелі"], "difficulty": 2 },
-    { "id": "vui-10", "prompt": "Debug Console", "answer": "Консоль налагоджувача: вивід і обчислення виразів", "tags": ["панелі"], "difficulty": 3 },
-    { "id": "vui-11", "prompt": "Outline", "answer": "Структура символів поточного файлу", "tags": ["панелі"], "difficulty": 3 },
-    { "id": "vui-12", "prompt": "Timeline", "answer": "Історія змін файлу: коміти й локальні збереження", "tags": ["панелі"], "difficulty": 4 },
-    { "id": "vui-13", "prompt": "Command Palette", "answer": "Пошук будь-якої команди редактора текстом", "tags": ["навігація"], "difficulty": 1 },
-    { "id": "vui-14", "prompt": "Quick Open", "answer": "Швидкий пошук файлу за назвою", "tags": ["навігація"], "difficulty": 2 },
-    { "id": "vui-15", "prompt": "Breadcrumbs", "answer": "Смужка над кодом: шлях до файлу й символ під курсором", "tags": ["навігація"], "difficulty": 3 },
-    { "id": "vui-16", "prompt": "Minimap", "answer": "Мініатюра файлу праворуч для швидкої прокрутки", "tags": ["редактор"], "difficulty": 2 },
-    { "id": "vui-17", "prompt": "Gutter", "answer": "Поле з номерами рядків: точки зупину, маркери Git", "tags": ["редактор"], "difficulty": 3 },
-    { "id": "vui-18", "prompt": "Sticky Scroll", "answer": "Закріплений угорі заголовок класу чи функції при прокрутці", "tags": ["редактор"], "difficulty": 4 },
-    { "id": "vui-19", "prompt": "Peek", "answer": "Перегляд визначення у спливному вікні, без переходу", "tags": ["редактор"], "difficulty": 3 },
-    { "id": "vui-20", "prompt": "IntelliSense", "answer": "Автодоповнення з урахуванням типів і контексту", "tags": ["редактор"], "difficulty": 1 },
-    { "id": "vui-21", "prompt": "Code Lens", "answer": "Сірі підказки над кодом: посилання, тести, автори", "tags": ["редактор"], "difficulty": 4 },
-    { "id": "vui-22", "prompt": "Diff Editor", "answer": "Дві версії файлу поруч із підсвіченими змінами", "tags": ["редактор"], "difficulty": 2 },
-    { "id": "vui-23", "prompt": "Merge Editor", "answer": "Окремий режим для розв’язання конфліктів злиття", "tags": ["редактор"], "difficulty": 4 },
-    { "id": "vui-24", "prompt": "Workspace", "answer": "Набір тек і налаштувань, з якими працює вікно", "tags": ["проєкт"], "difficulty": 2 },
-    { "id": "vui-25", "prompt": "Multi-root Workspace", "answer": "Кілька незалежних тек в одному вікні", "tags": ["проєкт"], "difficulty": 4 },
-    { "id": "vui-26", "prompt": ".vscode", "answer": "Тека з налаштуваннями проєкту в репозиторії", "tags": ["конфігурація"], "difficulty": 2 },
-    { "id": "vui-27", "prompt": "settings.json", "answer": "Налаштування текстом — користувача або проєкту", "tags": ["конфігурація"], "difficulty": 2 },
-    { "id": "vui-28", "prompt": "launch.json", "answer": "Конфігурації запуску налагоджувача", "tags": ["конфігурація"], "difficulty": 3 },
-    { "id": "vui-29", "prompt": "tasks.json", "answer": "Опис завдань складання та запуску команд", "tags": ["конфігурація"], "difficulty": 3 },
-    { "id": "vui-30", "prompt": "keybindings.json", "answer": "Власні гарячі клавіші користувача", "tags": ["конфігурація"], "difficulty": 3 },
-    { "id": "vui-31", "prompt": "Snippet", "answer": "Заготовка коду, що розгортається за коротким словом", "tags": ["редагування"], "difficulty": 2 },
-    { "id": "vui-32", "prompt": "Emmet", "answer": "Скорочений синтаксис для швидкого написання розмітки", "tags": ["редагування"], "difficulty": 3 },
-    { "id": "vui-33", "prompt": "Profile", "answer": "Окремий набір розширень і налаштувань під тип роботи", "tags": ["налаштування"], "difficulty": 4 },
-    { "id": "vui-34", "prompt": "Settings Sync", "answer": "Перенесення налаштувань між машинами через акаунт", "tags": ["налаштування"], "difficulty": 3 },
-    { "id": "vui-35", "prompt": "Dev Container", "answer": "Робота з кодом усередині контейнера з готовим оточенням", "tags": ["віддалено"], "difficulty": 4 },
-    { "id": "vui-36", "prompt": "Remote - SSH", "answer": "Редагування коду на віддаленій машині через SSH", "tags": ["віддалено"], "difficulty": 3 },
-    { "id": "vui-37", "prompt": "Live Share", "answer": "Спільне редагування сесії з іншим розробником", "tags": ["віддалено"], "difficulty": 3 },
-    { "id": "vui-38", "prompt": "Watch", "answer": "Список виразів, значення яких видно під час налагодження", "tags": ["налагодження"], "difficulty": 3 },
-    { "id": "vui-39", "prompt": "Call Stack", "answer": "Ланцюг викликів, що привів до поточної точки зупину", "tags": ["налагодження"], "difficulty": 3 },
-    { "id": "vui-40", "prompt": "Zen Mode", "answer": "Повноекранний режим без панелей — лише код", "tags": ["каркас"], "difficulty": 3 }
+    {
+      "id": "vui-01",
+      "prompt": "Activity Bar",
+      "answer": "Вузька смуга іконок ліворуч: Explorer, пошук, Git",
+      "tags": [
+        "каркас"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "vui-02",
+      "prompt": "Side Bar",
+      "answer": "Широка панель поруч з іконками — вміст обраного розділу",
+      "tags": [
+        "каркас"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "vui-03",
+      "prompt": "Status Bar",
+      "answer": "Смуга внизу: гілка, помилки, кодування, мова файлу",
+      "tags": [
+        "каркас"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "vui-04",
+      "prompt": "Panel",
+      "answer": "Нижня область: термінал, Problems, Output, Debug Console",
+      "tags": [
+        "каркас"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "vui-05",
+      "prompt": "Editor Group",
+      "answer": "Колонка редакторів; їх може бути кілька поруч",
+      "tags": [
+        "каркас"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "vui-06",
+      "prompt": "Explorer",
+      "answer": "Дерево файлів проєкту",
+      "tags": [
+        "панелі"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "vui-07",
+      "prompt": "Source Control",
+      "answer": "Панель Git: зміни, коміти, гілки",
+      "tags": [
+        "панелі"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "vui-08",
+      "prompt": "Problems",
+      "answer": "Список помилок і попереджень з усього проєкту",
+      "tags": [
+        "панелі"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "vui-09",
+      "prompt": "Output",
+      "answer": "Технічні логи розширень і завдань",
+      "tags": [
+        "панелі"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "vui-10",
+      "prompt": "Debug Console",
+      "answer": "Консоль налагоджувача: вивід і обчислення виразів",
+      "tags": [
+        "панелі"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "vui-11",
+      "prompt": "Outline",
+      "answer": "Структура символів поточного файлу",
+      "tags": [
+        "панелі"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "vui-12",
+      "prompt": "Timeline",
+      "answer": "Історія змін файлу: коміти й локальні збереження",
+      "tags": [
+        "панелі"
+      ],
+      "difficulty": 4
+    },
+    {
+      "id": "vui-13",
+      "prompt": "Command Palette",
+      "answer": "Пошук будь-якої команди редактора текстом",
+      "tags": [
+        "навігація"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "vui-14",
+      "prompt": "Quick Open",
+      "answer": "Швидкий пошук файлу за назвою",
+      "tags": [
+        "навігація"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "vui-15",
+      "prompt": "Breadcrumbs",
+      "answer": "Смужка над кодом: шлях до файлу й символ під курсором",
+      "tags": [
+        "навігація"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "vui-16",
+      "prompt": "Minimap",
+      "answer": "Мініатюра файлу праворуч для швидкої прокрутки",
+      "tags": [
+        "редактор"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "vui-17",
+      "prompt": "Gutter",
+      "answer": "Поле з номерами рядків: точки зупину, маркери Git",
+      "tags": [
+        "редактор"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "vui-18",
+      "prompt": "Sticky Scroll",
+      "answer": "Закріплений угорі заголовок класу чи функції при прокрутці",
+      "tags": [
+        "редактор"
+      ],
+      "difficulty": 4
+    },
+    {
+      "id": "vui-19",
+      "prompt": "Peek",
+      "answer": "Перегляд визначення у спливному вікні, без переходу",
+      "tags": [
+        "редактор"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "vui-20",
+      "prompt": "IntelliSense",
+      "answer": "Автодоповнення з урахуванням типів і контексту",
+      "tags": [
+        "редактор"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "vui-21",
+      "prompt": "Code Lens",
+      "answer": "Сірі підказки над кодом: посилання, тести, автори",
+      "tags": [
+        "редактор"
+      ],
+      "difficulty": 4
+    },
+    {
+      "id": "vui-22",
+      "prompt": "Diff Editor",
+      "answer": "Дві версії файлу поруч із підсвіченими змінами",
+      "tags": [
+        "редактор"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "vui-23",
+      "prompt": "Merge Editor",
+      "answer": "Окремий режим для розв’язання конфліктів злиття",
+      "tags": [
+        "редактор"
+      ],
+      "difficulty": 4
+    },
+    {
+      "id": "vui-24",
+      "prompt": "Workspace",
+      "answer": "Набір тек і налаштувань, з якими працює вікно",
+      "tags": [
+        "проєкт"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "vui-25",
+      "prompt": "Multi-root Workspace",
+      "answer": "Кілька незалежних тек в одному вікні",
+      "tags": [
+        "проєкт"
+      ],
+      "difficulty": 4
+    },
+    {
+      "id": "vui-26",
+      "prompt": ".vscode",
+      "answer": "Тека з налаштуваннями проєкту в репозиторії",
+      "tags": [
+        "конфігурація"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "vui-27",
+      "prompt": "settings.json",
+      "answer": "Налаштування текстом — користувача або проєкту",
+      "tags": [
+        "конфігурація"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "vui-28",
+      "prompt": "launch.json",
+      "answer": "Конфігурації запуску налагоджувача",
+      "tags": [
+        "конфігурація"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "vui-29",
+      "prompt": "tasks.json",
+      "answer": "Опис завдань складання та запуску команд",
+      "tags": [
+        "конфігурація"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "vui-30",
+      "prompt": "keybindings.json",
+      "answer": "Власні гарячі клавіші користувача",
+      "tags": [
+        "конфігурація"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "vui-31",
+      "prompt": "Snippet",
+      "answer": "Заготовка коду, що розгортається за коротким словом",
+      "tags": [
+        "редагування"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "vui-32",
+      "prompt": "Emmet",
+      "answer": "Скорочений синтаксис для швидкого написання розмітки",
+      "tags": [
+        "редагування"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "vui-33",
+      "prompt": "Profile",
+      "answer": "Окремий набір розширень і налаштувань під тип роботи",
+      "tags": [
+        "налаштування"
+      ],
+      "difficulty": 4
+    },
+    {
+      "id": "vui-34",
+      "prompt": "Settings Sync",
+      "answer": "Перенесення налаштувань між машинами через акаунт",
+      "tags": [
+        "налаштування"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "vui-35",
+      "prompt": "Dev Container",
+      "answer": "Робота з кодом усередині контейнера з готовим оточенням",
+      "tags": [
+        "віддалено"
+      ],
+      "difficulty": 4
+    },
+    {
+      "id": "vui-36",
+      "prompt": "Remote - SSH",
+      "answer": "Редагування коду на віддаленій машині через SSH",
+      "tags": [
+        "віддалено"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "vui-37",
+      "prompt": "Live Share",
+      "answer": "Спільне редагування сесії з іншим розробником",
+      "tags": [
+        "віддалено"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "vui-38",
+      "prompt": "Watch",
+      "answer": "Список виразів, значення яких видно під час налагодження",
+      "tags": [
+        "налагодження"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "vui-39",
+      "prompt": "Call Stack",
+      "answer": "Ланцюг викликів, що привів до поточної точки зупину",
+      "tags": [
+        "налагодження"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "vui-40",
+      "prompt": "Zen Mode",
+      "answer": "Повноекранний режим без панелей — лише код",
+      "tags": [
+        "каркас"
+      ],
+      "difficulty": 3
+    }
   ]
 }

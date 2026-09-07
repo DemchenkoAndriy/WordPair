@@ -8,6 +8,7 @@ import { StatsScreen } from '@/screens/StatsScreen'
 import { SettingsScreen } from '@/screens/SettingsScreen'
 import { setHapticsEnabled } from '@/ui/effects/haptics'
 import { setSoundEnabled } from '@/ui/effects/sfx'
+import { initSpeech, setSpeechEnabled } from '@/ui/effects/speech'
 
 const NAV: { screen: Screen; label: string }[] = [
   { screen: 'session', label: 'Тренування' },
@@ -31,9 +32,15 @@ export function App() {
   }, [boot])
 
   useEffect(() => {
+    initSpeech()
+  }, [])
+
+  useEffect(() => {
     setSoundEnabled(settings.soundEnabled)
     setHapticsEnabled(settings.hapticsEnabled)
-  }, [settings.soundEnabled, settings.hapticsEnabled])
+    // Кнопка 🔇 у шапці глушить усе, зокрема й озвучення.
+    setSpeechEnabled(settings.soundEnabled && settings.speechEnabled)
+  }, [settings.soundEnabled, settings.hapticsEnabled, settings.speechEnabled])
 
   return (
     <div className="app">

@@ -22,6 +22,7 @@ export const DEFAULT_SETTINGS: Settings = {
   soundEnabled: true,
   hapticsEnabled: true,
   reducedMotion: false,
+  speechEnabled: true,
   boardPairs: 5,
   roundPairs: 20,
   endless: false,

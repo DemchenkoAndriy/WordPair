@@ -221,6 +221,8 @@ export const useApp = create<AppState>((set, get) => ({
 
   async finish() {
     const state = get()
+    // session === null означає «вже завершено»: захист від подвійного запису,
+    // якщо підсумок покличуть і таймер, і кнопка «Завершити».
     if (!state.session) return
     const now = Date.now()
     const record = finishSession(state.session, now)
@@ -233,6 +235,7 @@ export const useApp = create<AppState>((set, get) => ({
       profile,
       lastRecord: record,
       screen: 'result',
+      session: null,
       rewards: streak.extended ? [...state.rewards, { type: 'streak-extended', days: profile.streakDays }] : state.rewards,
     })
 

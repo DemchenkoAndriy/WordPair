@@ -38,6 +38,17 @@ function parseCard(raw: unknown, index: number): Card {
   }
 }
 
+function parseSpeech(raw: unknown): Deck['speech'] {
+  if (raw === undefined) return undefined
+  if (typeof raw !== 'object' || raw === null) throw new DeckParseError('speech: очікується обʼєкт')
+  const r = raw as Record<string, unknown>
+  const side = r['side']
+  if (side !== 'prompt' && side !== 'answer') {
+    throw new DeckParseError('speech.side: очікується "prompt" або "answer"')
+  }
+  return { side, lang: str(r['lang'], 'speech.lang') }
+}
+
 export function parseDeck(raw: unknown): Deck {
   if (typeof raw !== 'object' || raw === null) throw new DeckParseError('колода: очікується обʼєкт')
   const r = raw as Record<string, unknown>
@@ -62,6 +73,10 @@ export function parseDeck(raw: unknown): Deck {
     sideLabels: { prompt: str(s['prompt'], 'sideLabels.prompt'), answer: str(s['answer'], 'sideLabels.answer') },
     tags: Array.isArray(r['tags']) ? r['tags'].map((t, i) => str(t, `tags[${i}]`)) : [],
     version: typeof r['version'] === 'number' ? r['version'] : 1,
+    ...(() => {
+      const speech = parseSpeech(r['speech'])
+      return speech ? { speech } : {}
+    })(),
     cards: parsed,
   }
 }

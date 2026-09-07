@@ -4,10 +4,13 @@ import { Banner } from '@/ui/components/Banner'
 import { Combo, RoundProgress } from '@/ui/components/Hud'
 import { playReward, type RewardVisual } from '@/ui/effects/rewards'
 import { primeAudio } from '@/ui/effects/sfx'
+import { speak } from '@/ui/effects/speech'
 import { pairMatchEngine, type PairToken } from '@/domain/engine/pairMatch'
 
 /** Скільки плитка сіріє й гасне перед підміною. Збігається з анімацією в CSS. */
 const FADE_MS = 420
+/** Пауза між останньою парою і екраном підсумку. */
+const FINISH_DELAY_MS = 700
 
 /** Головний екран — механіка №1 «утворення пар». */
 export function SessionScreen() {
@@ -24,6 +27,7 @@ export function SessionScreen() {
   const [visual, setVisual] = useState<RewardVisual | null>(null)
   const [shaking, setShaking] = useState(false)
   const completedRef = useRef(false)
+  const finishTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Проковтуємо чергу нагород і перетворюємо її на звук/вібрацію/анімацію.
   useEffect(() => {
@@ -50,18 +54,23 @@ export function SessionScreen() {
   }, [feedback, sweep])
 
   // Раунд закрито — коротка пауза на анімацію, далі підсумок.
+  //
+  // Таймер навмисно НЕ прибирається в cleanup цього ефекту. Одразу після
+  // останньої пари спрацьовує підміна, вона створює новий об'єкт раунду,
+  // ефект перезапускається — і cleanup погасив би вже запланований підсумок,
+  // а поставити його заново завадив би completedRef. Раунд просто зависав.
   useEffect(() => {
-    if (!round || completedRef.current) return
-    if (pairMatchEngine.isComplete(round)) {
-      completedRef.current = true
-      const t = setTimeout(() => void finish(), 700)
-      return () => clearTimeout(t)
-    }
-    return
+    if (!round || completedRef.current || !pairMatchEngine.isComplete(round)) return
+    completedRef.current = true
+    finishTimer.current = setTimeout(() => void finish(), FINISH_DELAY_MS)
   }, [round, finish])
 
+  // Новий раунд — скидаємо прапорець; при демонтажі гасимо таймер.
   useEffect(() => {
     completedRef.current = false
+    return () => {
+      if (finishTimer.current) clearTimeout(finishTimer.current)
+    }
   }, [session?.id])
 
   if (!round || !deck) return <div className="screen">Готуємо раунд…</div>
@@ -71,6 +80,11 @@ export function SessionScreen() {
 
   const onTap = (token: PairToken) => {
     primeAudio()
+    // Озвучення йде ПРЯМО звідси, з обробника дотику: на iOS перший виклик
+    // speechSynthesis поза жестом користувача мовчки ігнорується.
+    if (deck.speech && deck.speech.side === token.side && !token.matched) {
+      speak(token.text, deck.speech.lang)
+    }
     tap(token.id)
   }
 
