@@ -21,11 +21,21 @@ npm install
 npm run dev      # http://localhost:5173
 npm run test     # 40 тестів домену
 npm run build    # tsc -b && vite build
+npm run icons    # перегенерувати іконки PWA
 ```
+
+## Публікація
+
+Пуш у `main` збирає й публікує застосунок на GitHub Pages:
+**https://demchenkoandriy.github.io/WordPair/**
+
+Одноразово потрібно ввімкнути Settings → Pages → Source: **GitHub Actions**.
+Деталі — [`docs/DEPLOY.md`](docs/DEPLOY.md).
 
 ## Документація
 
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — шари, контракти, обґрунтування рішень
+- [`docs/DEPLOY.md`](docs/DEPLOY.md) — публікація на GitHub Pages
 - [`docs/ROADMAP.md`](docs/ROADMAP.md) — фази розробки
 
 ## Структура

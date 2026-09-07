@@ -1,0 +1,58 @@
+name: Публікація на GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+# Дозволи, потрібні для deploy-pages: читання коду + видача токена Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Одночасно виконується лише одне розгортання; нове скасовує чергу, але не
+# перериває те, що вже публікується — інакше сайт може лишитися недобудованим.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Збірка
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Тести домену — швидкі й без DOM; ламати прод через них не варто.
+      - name: Тести
+        run: npm test
+
+      - name: Збірка
+        env:
+          # Pages віддає сайт із /<repo>/. Беремо назву з контексту,
+          # щоб форк або перейменування репозиторію працювали без правок.
+          PUBLIC_BASE_PATH: /${{ github.event.repository.name }}/
+        run: npm run build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    name: Розгортання
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
