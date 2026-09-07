@@ -2,7 +2,12 @@ name: Публікація на GitHub Pages
 
 on:
   push:
-    branches: [main, master]
+    branches:
+      - main
+      - master
+      # Робоча гілка, поки в репозиторії ще немає main.
+      # Прибрати після злиття — сайт має публікуватися з однієї гілки.
+      - claude/word-learning-app-architecture-vwti3x
   workflow_dispatch:
 
 # Дозволи, потрібні для deploy-pages: читання коду + видача токена Pages.

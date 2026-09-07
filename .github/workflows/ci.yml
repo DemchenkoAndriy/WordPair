@@ -2,7 +2,12 @@ name: CI
 
 on:
   push:
-    branches-ignore: [main, master] # на main перевірку вже робить деплой
+    # На гілках, які публікуються, перевірку вже робить deploy.yml —
+    # не ганяємо ті самі тести двічі.
+    branches-ignore:
+      - main
+      - master
+      - claude/word-learning-app-architecture-vwti3x
   pull_request:
 
 permissions:

@@ -11,19 +11,46 @@
 
 ## Одноразове налаштування (потрібен доступ власника репозиторію)
 
-1. **Settings → Pages → Build and deployment → Source: `GitHub Actions`.**
-   Це єдиний обов'язковий крок; без нього workflow впаде на кроці `deploy-pages`
-   з помилкою про невключений Pages.
-2. Злити гілку `claude/word-learning-app-architecture-vwti3x` у `main`
-   (workflow слухає `main` і `master`; зараз у репозиторії ще немає жодної з них).
+**Settings → Pages → Build and deployment → Source: `GitHub Actions`.**
 
-Після цього кожен пуш у `main` публікує сайт на:
+Це єдиний обов'язковий крок — і найважливіший. Пояснення нижче.
+
+Після цього кожен пуш у гілку, що публікується, віддає сайт на:
 
 ```
 https://demchenkoandriy.github.io/WordPair/
 ```
 
 Запустити публікацію вручну: **Actions → Публікація на GitHub Pages → Run workflow**.
+
+### Чому обов'язково `GitHub Actions`, а не `Deploy from a branch`
+
+У режимі **Deploy from a branch** Pages бере гілку й віддає її вміст **як є**, без збірки.
+Для React + Vite це завжди зламаний сайт: кореневий `index.html` посилається на
+`/src/main.tsx`, а такого файлу на статичному хостингу немає — його створює збірка.
+У консолі це виглядає як:
+
+```
+Failed to load resource: the server responded with a status of 404 ()   main.tsx:1
+```
+
+і порожній темний екран (встиг застосуватися лише критичний inline-CSS).
+Публікувати треба вміст `dist/`, а зібрати його може тільки workflow — звідси
+режим `GitHub Actions`.
+
+Відрізнити режими в **Actions** легко за назвою запуску:
+
+| Запуск | Що це |
+|---|---|
+| `pages build and deployment` (шлях `dynamic/pages/…`) | Старий режим із гілки — сайт **не** зібрано |
+| `Публікація на GitHub Pages` (шлях `.github/workflows/deploy.yml`) | Наш workflow — правильно |
+
+### Які гілки публікуються
+
+`main`, `master` і — тимчасово — робоча гілка
+`claude/word-learning-app-architecture-vwti3x`, поки в репозиторії немає `main`.
+Після злиття рядок із робочою гілкою в `deploy.yml` треба прибрати: сайт має
+публікуватися з однієї гілки, інакше пуш у будь-яку з них перезаписує чужу версію.
 
 ## Чому саме так
 
