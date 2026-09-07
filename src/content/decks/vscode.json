@@ -1,0 +1,33 @@
+{
+  "id": "vscode",
+  "title": "VS Code",
+  "subtitle": "Гарячі клавіші (Windows / Linux)",
+  "icon": "🧩",
+  "accent": "#3aa0ff",
+  "locale": "uk",
+  "sideLabels": { "prompt": "Дія", "answer": "Скорочення" },
+  "tags": ["ide", "shortcuts"],
+  "version": 1,
+  "cards": [
+    { "id": "vsc-01", "prompt": "Швидкий перехід до файлу", "answer": "Ctrl+P", "tags": ["навігація"], "difficulty": 1 },
+    { "id": "vsc-02", "prompt": "Палітра команд", "answer": "Ctrl+Shift+P", "tags": ["навігація"], "difficulty": 1 },
+    { "id": "vsc-03", "prompt": "Пошук по всьому проєкту", "answer": "Ctrl+Shift+F", "tags": ["пошук"], "difficulty": 2 },
+    { "id": "vsc-04", "prompt": "Закоментувати рядок", "answer": "Ctrl+/", "tags": ["редагування"], "difficulty": 1 },
+    { "id": "vsc-05", "prompt": "Перейти до рядка за номером", "answer": "Ctrl+G", "tags": ["навігація"], "difficulty": 2 },
+    { "id": "vsc-06", "prompt": "Перейти до визначення", "answer": "F12", "tags": ["навігація"], "difficulty": 2 },
+    { "id": "vsc-07", "prompt": "Перейменувати символ у всьому проєкті", "answer": "F2", "tags": ["рефакторинг"], "difficulty": 2 },
+    { "id": "vsc-08", "prompt": "Додати курсор на наступний такий самий фрагмент", "answer": "Ctrl+D", "tags": ["редагування"], "difficulty": 3 },
+    { "id": "vsc-09", "prompt": "Показати або сховати термінал", "answer": "Ctrl+`", "tags": ["панелі"], "difficulty": 2 },
+    { "id": "vsc-10", "prompt": "Відформатувати документ", "answer": "Shift+Alt+F", "tags": ["редагування"], "difficulty": 2 },
+    { "id": "vsc-11", "prompt": "Перемістити рядок угору", "answer": "Alt+↑", "tags": ["редагування"], "difficulty": 2 },
+    { "id": "vsc-12", "prompt": "Продублювати рядок униз", "answer": "Shift+Alt+↓", "tags": ["редагування"], "difficulty": 3 },
+    { "id": "vsc-13", "prompt": "Показати або сховати бічну панель", "answer": "Ctrl+B", "tags": ["панелі"], "difficulty": 1 },
+    { "id": "vsc-14", "prompt": "Швидке виправлення", "answer": "Ctrl+.", "tags": ["рефакторинг"], "difficulty": 3 },
+    { "id": "vsc-15", "prompt": "Закрити активний редактор", "answer": "Ctrl+W", "tags": ["вікна"], "difficulty": 1 },
+    { "id": "vsc-16", "prompt": "Розділити редактор навпіл", "answer": "Ctrl+\\", "tags": ["вікна"], "difficulty": 3 },
+    { "id": "vsc-17", "prompt": "Панель «Проблеми»", "answer": "Ctrl+Shift+M", "tags": ["панелі"], "difficulty": 3 },
+    { "id": "vsc-18", "prompt": "Перейти до символу у файлі", "answer": "Ctrl+Shift+O", "tags": ["навігація"], "difficulty": 3 },
+    { "id": "vsc-19", "prompt": "Відкрити налаштування", "answer": "Ctrl+,", "tags": ["панелі"], "difficulty": 2 },
+    { "id": "vsc-20", "prompt": "Згорнути весь код у файлі", "answer": "Ctrl+K Ctrl+0", "tags": ["редагування"], "difficulty": 4 }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "jira",
+  "title": "Jira",
+  "subtitle": "Терміни трекера задач",
+  "icon": "🗂️",
+  "accent": "#7c5cff",
+  "locale": "uk",
+  "sideLabels": { "prompt": "Термін", "answer": "Значення" },
+  "tags": ["agile", "tools"],
+  "version": 1,
+  "cards": [
+    { "id": "jir-01", "prompt": "Epic", "answer": "Велика задача, що ділиться на історії", "difficulty": 1 },
+    { "id": "jir-02", "prompt": "Story", "answer": "Одиниця роботи з погляду користувача", "difficulty": 1 },
+    { "id": "jir-03", "prompt": "Sprint", "answer": "Фіксований відрізок часу на роботу команди", "difficulty": 1 },
+    { "id": "jir-04", "prompt": "Backlog", "answer": "Список задач, ще не взятих у роботу", "difficulty": 1 },
+    { "id": "jir-05", "prompt": "Board", "answer": "Дошка з колонками статусів", "difficulty": 1 },
+    { "id": "jir-06", "prompt": "Workflow", "answer": "Схема дозволених переходів між статусами", "difficulty": 2 },
+    { "id": "jir-07", "prompt": "Transition", "answer": "Перехід задачі з одного статусу в інший", "difficulty": 2 },
+    { "id": "jir-08", "prompt": "Assignee", "answer": "Виконавець задачі", "difficulty": 1 },
+    { "id": "jir-09", "prompt": "Reporter", "answer": "Той, хто створив задачу", "difficulty": 2 },
+    { "id": "jir-10", "prompt": "Story Points", "answer": "Відносна оцінка складності задачі", "difficulty": 2 },
+    { "id": "jir-11", "prompt": "Velocity", "answer": "Скільки story points команда закриває за спринт", "difficulty": 3 },
+    { "id": "jir-12", "prompt": "Burndown chart", "answer": "Графік залишку роботи в спринті", "difficulty": 3 },
+    { "id": "jir-13", "prompt": "JQL", "answer": "Мова запитів для пошуку задач", "difficulty": 3 },
+    { "id": "jir-14", "prompt": "Subtask", "answer": "Підзадача всередині задачі", "difficulty": 1 },
+    { "id": "jir-15", "prompt": "Component", "answer": "Логічна частина проєкту для групування задач", "difficulty": 3 },
+    { "id": "jir-16", "prompt": "Fix Version", "answer": "Версія, у якій буде виправлення", "difficulty": 3 },
+    { "id": "jir-17", "prompt": "Resolution", "answer": "Причина, з якої задачу закрито", "difficulty": 3 },
+    { "id": "jir-18", "prompt": "Label", "answer": "Вільна мітка для наскрізного групування", "difficulty": 2 },
+    { "id": "jir-19", "prompt": "Swimlane", "answer": "Горизонтальна доріжка на дошці", "difficulty": 4 },
+    { "id": "jir-20", "prompt": "Epic Link", "answer": "Звʼязок задачі з епіком", "difficulty": 2 }
+  ]
+}
