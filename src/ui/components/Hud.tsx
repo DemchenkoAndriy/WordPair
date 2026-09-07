@@ -1,7 +1,18 @@
 import { levelProgress } from '@/domain/scoring'
 
-/** Постійні показники прогресу: рівень, XP-смужка, денний стрік. */
-export function Hud({ xp, streakDays }: { xp: number; streakDays: number }) {
+interface HudProps {
+  xp: number
+  streakDays: number
+  soundEnabled: boolean
+  onToggleSound(): void
+}
+
+/**
+ * Постійні показники прогресу: рівень, XP-смужка, денний стрік.
+ * Тут же — вимкнення звуку: воно потрібне саме посеред раунду
+ * (в транспорті, на нараді), а не через два переходи в налаштуваннях.
+ */
+export function Hud({ xp, streakDays, soundEnabled, onToggleSound }: HudProps) {
   const level = levelProgress(xp)
   return (
     <div className="hud">
@@ -10,6 +21,16 @@ export function Hud({ xp, streakDays }: { xp: number; streakDays: number }) {
         <div className="hud__fill" style={{ width: `${level.ratio * 100}%` }} />
       </div>
       <span className="hud__streak">🔥 {streakDays}</span>
+      <button
+        type="button"
+        className="hud__mute"
+        onClick={onToggleSound}
+        aria-pressed={!soundEnabled}
+        aria-label={soundEnabled ? 'Вимкнути звук' : 'Увімкнути звук'}
+        title={soundEnabled ? 'Вимкнути звук' : 'Увімкнути звук'}
+      >
+        {soundEnabled ? '🔊' : '🔇'}
+      </button>
     </div>
   )
 }

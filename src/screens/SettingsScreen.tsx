@@ -1,6 +1,4 @@
 import { useApp } from '@/state/store'
-import { setHapticsEnabled } from '@/ui/effects/haptics'
-import { setSoundEnabled } from '@/ui/effects/sfx'
 
 export function SettingsScreen() {
   const settings = useApp((s) => s.settings)
@@ -15,10 +13,7 @@ export function SettingsScreen() {
         <input
           type="checkbox"
           checked={settings.soundEnabled}
-          onChange={(e) => {
-            setSoundEnabled(e.target.checked)
-            update({ soundEnabled: e.target.checked })
-          }}
+          onChange={(e) => update({ soundEnabled: e.target.checked })}
         />
       </label>
 
@@ -27,10 +22,7 @@ export function SettingsScreen() {
         <input
           type="checkbox"
           checked={settings.hapticsEnabled}
-          onChange={(e) => {
-            setHapticsEnabled(e.target.checked)
-            update({ hapticsEnabled: e.target.checked })
-          }}
+          onChange={(e) => update({ hapticsEnabled: e.target.checked })}
         />
       </label>
 

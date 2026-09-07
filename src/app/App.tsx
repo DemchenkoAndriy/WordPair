@@ -24,6 +24,7 @@ export function App() {
   const startRound = useApp((s) => s.startRound)
   const profile = useApp((s) => s.profile)
   const settings = useApp((s) => s.settings)
+  const updateSettings = useApp((s) => s.updateSettings)
 
   useEffect(() => {
     void boot()
@@ -36,7 +37,12 @@ export function App() {
 
   return (
     <div className="app">
-      <Hud xp={profile.xp} streakDays={profile.streakDays} />
+      <Hud
+        xp={profile.xp}
+        streakDays={profile.streakDays}
+        soundEnabled={settings.soundEnabled}
+        onToggleSound={() => updateSettings({ soundEnabled: !settings.soundEnabled })}
+      />
       {!ready && <div className="screen">Завантаження…</div>}
       {ready && screen === 'session' && <SessionScreen />}
       {ready && screen === 'result' && <ResultScreen />}
