@@ -99,6 +99,7 @@ body {
   padding: 4px;
 }
 .column { display: flex; flex-direction: column; gap: 8px; }
+.column__label-speak { font-size: 10px; }
 .column__label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); padding-left: 4px; }
 
 .tile {

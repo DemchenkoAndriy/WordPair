@@ -1,4 +1,5 @@
 import { useApp } from '@/state/store'
+import { SpeechCheck } from './SpeechCheck'
 
 export function SettingsScreen() {
   const settings = useApp((s) => s.settings)
@@ -29,6 +30,8 @@ export function SettingsScreen() {
           onChange={(e) => update({ speechEnabled: e.target.checked })}
         />
       </label>
+
+      {settings.speechEnabled && <SpeechCheck />}
 
       <label className="row">
         <span>Вібрація</span>

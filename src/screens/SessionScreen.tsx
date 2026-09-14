@@ -102,7 +102,10 @@ export function SessionScreen() {
       <Combo combo={session?.combo ?? 0} />
       <div className={`board${shaking ? ' shake' : ''}`}>
         <div className="column">
-          <span className="column__label">{deck.sideLabels.prompt}</span>
+          <span className="column__label">
+            {deck.sideLabels.prompt}
+            {deck.speech?.side === 'prompt' && <span className="column__label-speak"> 🔈</span>}
+          </span>
           {prompts.map((token) => (
             <button
               key={`${token.id}:${token.generation}`}
@@ -114,7 +117,10 @@ export function SessionScreen() {
           ))}
         </div>
         <div className="column">
-          <span className="column__label">{deck.sideLabels.answer}</span>
+          <span className="column__label">
+            {deck.sideLabels.answer}
+            {deck.speech?.side === 'answer' && <span className="column__label-speak"> 🔈</span>}
+          </span>
           {answers.map((token) => (
             <button
               key={`${token.id}:${token.generation}`}
