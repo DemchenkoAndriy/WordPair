@@ -15,6 +15,9 @@
 ;    F7  — калібрування бічного кроку (садить 2 рослини через один крок)
 ;    F6  — калібрування кроку між рядами (садить 2 рослини через крок уперед)
 ;    F4  — вікно налаштувань
+;    F3  — піпетка: точка «повно» (правий край бару стаміни)
+;    F2  — піпетка: точка «порожньо» (лівий край бару стаміни)
+;    F1  — живий контроль обох точок (для перевірки піпетки)
 ;    Ctrl+Alt+R — перезапустити скрипт
 ;
 ;  Перед першим засіванням обов'язково прочитай README.md (калібрування).
@@ -28,6 +31,8 @@ SetKeyDelay 25, 25
 SetMouseDelay 25
 SetWorkingDir A_ScriptDir
 CoordMode "ToolTip", "Screen"
+CoordMode "Pixel", "Screen"
+CoordMode "Mouse", "Screen"
 
 global GAME := "ahk_exe valheim.exe"
 global INI  := A_ScriptDir "\valheim-garden.ini"
@@ -47,6 +52,15 @@ cfg.afterPlantMs := 320      ; пауза після посадки (кулда�
 cfg.afterMoveMs  := 140      ; пауза після кроку, щоб персонаж зупинився
 cfg.restEvery    := 20       ; перепочинок кожні N рослин (0 — без перепочинків)
 cfg.restMs       := 10000    ; стоїмо й відновлюємо стаміну, мс (0 — чекати на F9)
+cfg.staminaMode  := false    ; читати бар стаміни з екрана замість таймера
+cfg.lowX         := 0        ; точка «порожньо» — лівий край бару
+cfg.lowY         := 0
+cfg.lowColor     := 0        ; колір цієї точки при ПОВНІЙ стаміні
+cfg.fullX        := 0        ; точка «повно» — правий край бару
+cfg.fullY        := 0
+cfg.fullColor    := 0
+cfg.tolerance    := 40       ; допуск на колір (0-255), більше — терпиміше
+cfg.waitLimitMs  := 40000    ; стеля очікування стаміни, далі пауза до F9
 cfg.startDelayMs := 800      ; затримка перед стартом — встигнути прибрати руки
 cfg.dryRun       := false    ; репетиція: нічого не натискає, лише показує кроки
 cfg.keyLeft      := "a"
@@ -57,6 +71,7 @@ cfg.keyBack      := "s"
 global Running := false
 global Paused  := false
 global settingsGui := ""
+global monitorOn := false
 
 LoadSettings()
 BuildGui()
@@ -76,9 +91,12 @@ F8::
 }
 F7::CalibrateStep("side")
 F6::CalibrateStep("forward")
+F3::PickPoint("full")
+F2::PickPoint("low")
 #HotIf
 
-; Пауза й аварійна зупинка — глобальні, працюють навіть якщо фокус злетів
+; Глобальні: мають спрацювати, навіть якщо фокус злетів з гри
+F1::ToggleMonitor()
 F9::TogglePause()
 F10::StopRun("Аварійна зупинка (F10)")
 F4::ShowSettings()
@@ -112,12 +130,17 @@ RunGarden() {
                 if !Guard()
                     return
 
+                ; пікселевий режим стежить за баром перед кожною рослиною,
+                ; таймерний — рахує посаджене після неї
+                if UsePixelStamina() && !StaminaGate(done, total)
+                    return
+
                 Plant()
                 done++
                 Status(Format("Ряд {1}/{2} · рослина {3}/{4} · разом {5}/{6}",
                     r, cfg.rows, c, cfg.cols, done, total), 0)
 
-                if cfg.restEvery > 0 && Mod(done, cfg.restEvery) = 0 && done < total {
+                if !UsePixelStamina() && cfg.restEvery > 0 && Mod(done, cfg.restEvery) = 0 && done < total {
                     if !Rest(done, total)
                         return
                 }
@@ -258,6 +281,132 @@ ReleaseAll() {
 }
 
 ; ---------------------------------------------------------------------------
+;  Бар стаміни з екрана
+;
+;  Гра назовні нічого не віддає, тож єдиний зворотний зв'язок — пікселі.
+;  Дві точки замість однієї дають гістерезис: саджаємо, доки горить точка
+;  «порожньо», і чекаємо, доки не загориться точка «повно». Обидва кольори
+;  знімаються піпеткою при ПОВНІЙ стаміні, тож логіка не залежить від того,
+;  якого кольору бар і чи він ховається — порівнюємо з тим, що зняли.
+; ---------------------------------------------------------------------------
+PixelAt(x, y) {
+    try
+        return Integer(PixelGetColor(x, y))
+    catch
+        return -1
+}
+
+; Наскільки два кольори різні: найбільше розходження по каналу, 0-255.
+ColorDist(c1, c2) {
+    if c1 < 0 || c2 < 0
+        return 255
+    dr := Abs(((c1 >> 16) & 0xFF) - ((c2 >> 16) & 0xFF))
+    dg := Abs(((c1 >> 8)  & 0xFF) - ((c2 >> 8)  & 0xFF))
+    db := Abs(( c1        & 0xFF) - ( c2        & 0xFF))
+    return Max(dr, dg, db)
+}
+
+StaminaCalibrated() {
+    global cfg
+    return cfg.lowX > 0 && cfg.lowY > 0 && cfg.fullX > 0 && cfg.fullY > 0
+}
+
+UsePixelStamina() {
+    global cfg
+    return cfg.staminaMode && StaminaCalibrated()
+}
+
+; Точка «порожньо» ще горить — стаміни вистачає, можна саджати далі.
+StaminaOk() {
+    global cfg
+    return ColorDist(PixelAt(cfg.lowX, cfg.lowY), cfg.lowColor) <= cfg.tolerance
+}
+
+; Точка «повно» загорілася — бар набрався.
+StaminaFull() {
+    global cfg
+    return ColorDist(PixelAt(cfg.fullX, cfg.fullY), cfg.fullColor) <= cfg.tolerance
+}
+
+; Піпетка. Знімається при ПОВНІЙ стамінІ: відкрий інвентар (Tab), щоб
+; звільнити курсор, наведи його на бар і тисни клавішу.
+PickPoint(which) {
+    global cfg
+    MouseGetPos(&x, &y)
+    color := PixelAt(x, y)
+    if color < 0 {
+        Status("Не вдалося прочитати піксель. Гра має бути у вікні без рамки", 5000)
+        return
+    }
+
+    if which = "low" {
+        cfg.lowX := x, cfg.lowY := y, cfg.lowColor := color
+        name := "порожньо"
+    } else {
+        cfg.fullX := x, cfg.fullY := y, cfg.fullColor := color
+        name := "повно"
+    }
+    SaveSettings()
+    Status(Format("Точка «{1}»: {2},{3} колір {4}. Перевір через F1", name, x, y, Format("0x{:06X}", color)), 6000)
+}
+
+; Живий контроль обох точок: видно, як вони гаснуть і загоряються.
+ToggleMonitor() {
+    global monitorOn
+    monitorOn := !monitorOn
+    if monitorOn {
+        SetTimer MonitorTick, 200
+    } else {
+        SetTimer MonitorTick, 0
+        ToolTip
+    }
+}
+
+MonitorTick() {
+    global cfg, monitorOn
+    if !monitorOn
+        return
+    if !StaminaCalibrated() {
+        Status("Піпетка не знята: F2 — точка «порожньо», F3 — точка «повно». F1 — вимкнути", 0)
+        return
+    }
+    lowNow  := PixelAt(cfg.lowX, cfg.lowY)
+    fullNow := PixelAt(cfg.fullX, cfg.fullY)
+    Status(Format("порожньо: {1} (різниця {2}) · повно: {3} (різниця {4}) · допуск {5} · F1 — вимкнути",
+        ColorDist(lowNow, cfg.lowColor) <= cfg.tolerance ? "горить" : "згасла",
+        ColorDist(lowNow, cfg.lowColor),
+        ColorDist(fullNow, cfg.fullColor) <= cfg.tolerance ? "горить" : "згасла",
+        ColorDist(fullNow, cfg.fullColor),
+        cfg.tolerance), 0)
+}
+
+; Перед посадкою: якщо стаміна на межі — стоїмо, доки бар не набереться.
+; Повертає false, якщо прохід зупинили.
+StaminaGate(done, total) {
+    global cfg, Paused
+
+    if StaminaOk()
+        return true
+
+    ReleaseAll()
+    waited := 0
+    while !StaminaFull() {
+        if !Guard()
+            return false
+        Status(Format("Чекаю стаміну: {1} с · посаджено {2}/{3}", Round(waited / 1000, 1), done, total), 0)
+        Sleep 200
+        waited += 200
+
+        if cfg.waitLimitMs > 0 && waited >= cfg.waitLimitMs {
+            Paused := true
+            Status(Format("Бар не набрався за {1} с — перевір піпетку через F1. F9 — продовжити", Round(waited / 1000)), 0)
+            return Guard()
+        }
+    }
+    return Guard()
+}
+
+; ---------------------------------------------------------------------------
 ;  Калібрування: саджає дві рослини через один крок.
 ;  Відстань між ними — це і є крок сітки. Міряємо не швидкість, а сам крок:
 ;  розгін персонажа входить у кожен короткий ривок однаково.
@@ -312,7 +461,7 @@ ClearStatus() {
 ; ---------------------------------------------------------------------------
 ;  Налаштування: збереження й вікно
 ; ---------------------------------------------------------------------------
-BoolKeys() => ["serpentine", "dryRun"]
+BoolKeys() => ["serpentine", "dryRun", "staminaMode"]
 
 LoadSettings() {
     global cfg, INI
@@ -385,6 +534,17 @@ BuildGui() {
 
     g.Add("Text", "xm w340", "Перепочинок потрібен на відновлення стаміни. 0 мс означає «стояти, доки не натисну F9».")
 
+    ctlStamina := g.Add("CheckBox", "xm w340", "Читати бар стаміни з екрана замість таймера")
+    ctlStamina.Value := cfg.staminaMode ? 1 : 0
+
+    g.Add("Text", "xm w150", "Допуск на колір:")
+    ctlTolerance := g.Add("Edit", "x+6 w70 Number", cfg.tolerance)
+
+    g.Add("Text", "xm w150", "Стеля очікування, мс:")
+    ctlWaitLimit := g.Add("Edit", "x+6 w70 Number", cfg.waitLimitMs)
+
+    ctlPoints := g.Add("Text", "xm w340", PointsSummary())
+
     ctlSerp := g.Add("CheckBox", "xm w340", "Змійка (наступний ряд у зворотний бік)")
     ctlSerp.Value := cfg.serpentine ? 1 : 0
 
@@ -406,18 +566,29 @@ BuildGui() {
         cfg.afterMoveMs  := Max(0, Integer(ctlAfterMove.Value = "" ? 0 : ctlAfterMove.Value))
         cfg.restEvery    := Max(0, Integer(ctlRestEvery.Value = "" ? 0 : ctlRestEvery.Value))
         cfg.restMs       := Max(0, Integer(ctlRestMs.Value = "" ? 0 : ctlRestMs.Value))
+        cfg.tolerance    := Max(0, Integer(ctlTolerance.Value = "" ? 0 : ctlTolerance.Value))
+        cfg.waitLimitMs  := Max(0, Integer(ctlWaitLimit.Value = "" ? 0 : ctlWaitLimit.Value))
+        cfg.staminaMode  := ctlStamina.Value = 1
         cfg.serpentine   := ctlSerp.Value = 1
         cfg.dryRun       := ctlDry.Value = 1
         SaveSettings()
     }
 
-    btnSave.OnEvent("Click", (*) => (Apply(), Status("Збережено", 2000)))
+    btnSave.OnEvent("Click", (*) => (Apply(), ctlPoints.Value := PointsSummary(), Status("Збережено", 2000)))
     btnStart.OnEvent("Click", (*) => (Apply(), g.Hide(), FocusGameThen(RunGarden)))
     btnCal.OnEvent("Click", (*) => (Apply(), g.Hide(), FocusGameThen(() => CalibrateStep("side"))))
     g.OnEvent("Close", (*) => g.Hide())
     g.OnEvent("Escape", (*) => g.Hide())
 
     settingsGui := g
+}
+
+PointsSummary() {
+    global cfg
+    if !StaminaCalibrated()
+        return "Точки бару не зняті. Відкрий інвентар (Tab), наведи курсор на бар: F2 — лівий край, F3 — правий."
+    return Format("Точки зняті: «порожньо» {1},{2} · «повно» {3},{4}. F1 — перевірити наживо.",
+        cfg.lowX, cfg.lowY, cfg.fullX, cfg.fullY)
 }
 
 ShowSettings(*) {
