@@ -4,6 +4,8 @@
 ; ============================================================================
 ;  Valheim — рівні грядки
 ;  Макрос саджає насіння рівною сіткою: клік -> крок убік -> клік -> ...
+;  Кожні N рослин (типово 20) стає на перепочинок: садіння їсть стаміну,
+;  і без паузи персонаж перестає ставити рослини.
 ;  Нічого в грі не патчить, працює на ванільному Valheim.
 ;
 ;  Гарячі клавіші (діють, коли активне вікно Valheim):
@@ -43,6 +45,8 @@ cfg.returnMs     := 0        ; добавка до зворотного прох
 cfg.plantHoldMs  := 70       ; скільки тримати ліву кнопку миші
 cfg.afterPlantMs := 320      ; пауза після посадки (кулдаун встановлення)
 cfg.afterMoveMs  := 140      ; пауза після кроку, щоб персонаж зупинився
+cfg.restEvery    := 20       ; перепочинок кожні N рослин (0 — без перепочинків)
+cfg.restMs       := 10000    ; стоїмо й відновлюємо стаміну, мс (0 — чекати на F9)
 cfg.startDelayMs := 800      ; затримка перед стартом — встигнути прибрати руки
 cfg.dryRun       := false    ; репетиція: нічого не натискає, лише показує кроки
 cfg.keyLeft      := "a"
@@ -112,6 +116,11 @@ RunGarden() {
                 done++
                 Status(Format("Ряд {1}/{2} · рослина {3}/{4} · разом {5}/{6}",
                     r, cfg.rows, c, cfg.cols, done, total), 0)
+
+                if cfg.restEvery > 0 && Mod(done, cfg.restEvery) = 0 && done < total {
+                    if !Rest(done, total)
+                        return
+                }
 
                 if c < cfg.cols {
                     if !Guard()
@@ -214,6 +223,31 @@ Move(key, ms) {
     Sleep ms
     Send "{Blind}{" key " up}"
     Sleep cfg.afterMoveMs
+}
+
+; Перепочинок кожні cfg.restEvery рослин: садіння витрачає стаміну, тож без
+; пауз персонаж просто перестане ставити рослини. Клавіші відпущені, стоїмо.
+; Повертає false, якщо за час перепочинку прохід зупинили.
+Rest(done, total) {
+    global cfg, Paused
+
+    ReleaseAll()
+
+    if cfg.restMs <= 0 {
+        Paused := true
+        Status(Format("Перепочинок на стаміну: посаджено {1}/{2}. F9 — продовжити", done, total), 0)
+        return Guard()
+    }
+
+    left := cfg.restMs
+    while left > 0 {
+        if !Guard()
+            return false
+        Status(Format("Відновлюю стаміну: {1} с · посаджено {2}/{3}", Round(left / 1000, 1), done, total), 0)
+        Sleep 200
+        left -= 200
+    }
+    return Guard()
 }
 
 ReleaseAll() {
@@ -343,6 +377,14 @@ BuildGui() {
     g.Add("Text", "xm w150", "Пауза після кроку, мс:")
     ctlAfterMove := g.Add("Edit", "x+6 w70 Number", cfg.afterMoveMs)
 
+    g.Add("Text", "xm w150", "Перепочинок кожні, шт:")
+    ctlRestEvery := g.Add("Edit", "x+6 w70 Number", cfg.restEvery)
+
+    g.Add("Text", "xm w150", "Перепочинок триває, мс:")
+    ctlRestMs := g.Add("Edit", "x+6 w70 Number", cfg.restMs)
+
+    g.Add("Text", "xm w340", "Перепочинок потрібен на відновлення стаміни. 0 мс означає «стояти, доки не натисну F9».")
+
     ctlSerp := g.Add("CheckBox", "xm w340", "Змійка (наступний ряд у зворотний бік)")
     ctlSerp.Value := cfg.serpentine ? 1 : 0
 
@@ -362,6 +404,8 @@ BuildGui() {
         cfg.rowStepMs    := Max(0, Integer(ctlRowStep.Value = "" ? 0 : ctlRowStep.Value))
         cfg.afterPlantMs := Max(0, Integer(ctlAfterPlant.Value = "" ? 0 : ctlAfterPlant.Value))
         cfg.afterMoveMs  := Max(0, Integer(ctlAfterMove.Value = "" ? 0 : ctlAfterMove.Value))
+        cfg.restEvery    := Max(0, Integer(ctlRestEvery.Value = "" ? 0 : ctlRestEvery.Value))
+        cfg.restMs       := Max(0, Integer(ctlRestMs.Value = "" ? 0 : ctlRestMs.Value))
         cfg.serpentine   := ctlSerp.Value = 1
         cfg.dryRun       := ctlDry.Value = 1
         SaveSettings()
